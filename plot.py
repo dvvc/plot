@@ -1,4 +1,5 @@
 import pygame
+import math
 
 # SETTINGS
 screen_width = 400
@@ -14,10 +15,11 @@ def init():
     pygame.init()
     screen = pygame.display.set_mode((screen_width,screen_height))
         
-def plot(data,yrange=(0,200)):
+def plot(data,xrange=(0,400),yrange=(0,400),screen_range=(400,400)):
     global clock
     for p in data:
-        draw_point(p)
+        c = convert_point(p,xrange,yrange,screen_range)
+        draw_point(c)
 
     while(True):
         pygame.display.flip()
@@ -34,8 +36,8 @@ def convert_point(point, xrange, yrange, screen_range):
     xoffset = -xrange[0] * xfactor
     yoffset = -yrange[0] * yfactor
 
-    x =  point[0] * xfactor + xoffset
-    y = point[1] * yfactor + yoffset
+    x = round(point[0] * xfactor) + xoffset
+    y = round(point[1] * yfactor) + yoffset
 
     # flip the y coord so the origin is at the bottom
     y = screen_range[1] - y
@@ -48,7 +50,20 @@ def draw_point(point):
     pygame.draw.circle(screen,(255,0,0),point,2)
 
 
+# Found in stackoverflow.com
+def drange(start, stop, step):
+    """Generate a range of points with a step smaller than 1"""
+    r = start
+    while r < stop:
+        yield r
+        r += step
+
 # just for testing purposes
 if __name__ == "__main__":
     init()
-    p
+
+    plot([(x,math.sin(x)) for x in drange(-2*math.pi,2*math.pi,step=0.2)],
+         xrange=(-2*math.pi,2*math.pi),
+         yrange=(-1,1),
+         screen_range=(400,400))
+
