@@ -2,21 +2,22 @@ import pygame
 import math
 
 # SETTINGS
-screen_width = 400
-screen_height = 400
 
 
 screen=None
 clock = pygame.time.Clock()
 
-def init():
+def init(screen_size):
     """Initialize graphics"""
-    global screen, screen_width, screen_height
+    global screen
     pygame.init()
-    screen = pygame.display.set_mode((screen_width,screen_height))
+    screen = pygame.display.set_mode(screen_size)
         
 def plot(data,xrange=(0,400),yrange=(0,400),screen_range=(400,400)):
     global clock
+
+    draw_axis(xrange,yrange,screen_range)
+
     for p in data:
         c = convert_point(p,xrange,yrange,screen_range)
         draw_point(c)
@@ -28,6 +29,25 @@ def plot(data,xrange=(0,400),yrange=(0,400),screen_range=(400,400)):
                 return
 
         clock.tick(20)
+
+
+def draw_axis(xrange, yrange, screen_range):
+    """draw the axis"""
+    global screen
+    xaxis_orig = (xrange[0], 0)
+    xaxis_final = (xrange[1], 0)
+
+    xaxis_orig_c = convert_point(xaxis_orig,xrange,yrange,screen_range)
+    xaxis_final_c = convert_point(xaxis_final,xrange,yrange,screen_range)
+
+    yaxis_orig = (0, yrange[0])
+    yaxis_final = (0, yrange[1])
+
+    yaxis_orig_c = convert_point(yaxis_orig,xrange,yrange,screen_range)
+    yaxis_final_c = convert_point(yaxis_final,xrange,yrange,screen_range)
+
+    pygame.draw.line(screen,(255,255,255),xaxis_orig_c,xaxis_final_c)
+    pygame.draw.line(screen,(255,255,255),yaxis_orig_c,yaxis_final_c)
 
 def convert_point(point, xrange, yrange, screen_range):
     """Convert the coordinates of a point based on the plotting range and the screen size"""
@@ -60,10 +80,12 @@ def drange(start, stop, step):
 
 # just for testing purposes
 if __name__ == "__main__":
-    init()
+    screen_size=(400,400)
+
+    init(screen_size)
 
     plot([(x,math.sin(x)) for x in drange(-2*math.pi,2*math.pi,step=0.2)],
          xrange=(-2*math.pi,2*math.pi),
          yrange=(-1,1),
-         screen_range=(400,400))
+         screen_range=screen_size)
 
