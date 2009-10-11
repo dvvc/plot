@@ -1,5 +1,28 @@
 Python plot library
 David Villegas
 
-Helper library to plot graphs
+Helper library to plot graphs using pygame
+
+Requirements:
+  - pygame
+
+Usage:
+  - call init with the screen width and height
+  - call add_function or add_points to indicate what is going to be plotted
+  - call plot with the x-axis and y-axis range
+
+
+Example:
+ screen_size=(800,200)
+
+ init(screen_size)
+
+ add_function(lambda x: math.sin(2*x*math.pi), (255,0,0))
+ add_function(lambda x: 0.5, (0,255,0))
+    
+ add_points([(1,1),(2,0.5), (3,0)],(0,0,255))
+
+ plot(xrange=(-math.pi,math.pi),
+      yrange=(-1,1),
+      screen_range=screen_size)
 
