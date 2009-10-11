@@ -30,6 +30,17 @@ def plot(data,xrange=(0,400),yrange=(0,400),screen_range=(400,400)):
 
         clock.tick(20)
 
+def plot_f(f,xrange=(0,400),yrange=(0,400),screen_range=(400,400)):
+    """Generate all required points to draw a function and call plot"""
+    npoints = screen_range[0]
+    xrange_length = xrange[1]-xrange[0]
+    increment = xrange_length/float(npoints)
+
+    data = [(x,f(x)) for x in drange(xrange[0],xrange[1],increment)]
+    for d in data:
+        print "%f,%f" % (d[0],d[1])
+    plot(data,xrange,yrange,screen_range)
+
 
 def draw_axis(xrange, yrange, screen_range):
     """draw the axis"""
@@ -78,14 +89,15 @@ def drange(start, stop, step):
         yield r
         r += step
 
+
+
 # just for testing purposes
 if __name__ == "__main__":
-    screen_size=(400,400)
+    screen_size=(800,200)
 
     init(screen_size)
 
-    plot([(x,math.sin(x)) for x in drange(-2*math.pi,2*math.pi,step=0.2)],
-         xrange=(-2*math.pi,2*math.pi),
-         yrange=(-1,1),
-         screen_range=screen_size)
-
+    plot_f(lambda x: math.sin(2*x*math.pi),
+           xrange=(-math.pi,math.pi),
+           yrange=(-1,1),
+           screen_range=screen_size)
