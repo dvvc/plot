@@ -6,6 +6,8 @@ import math
 
 screen=None
 clock = pygame.time.Clock()
+all_points=[]
+all_functions=[]
 
 def init(screen_size):
     """Initialize graphics"""
@@ -13,14 +15,35 @@ def init(screen_size):
     pygame.init()
     screen = pygame.display.set_mode(screen_size)
         
-def plot(data,xrange=(0,400),yrange=(0,400),screen_range=(400,400)):
-    global clock
+def add_points(data, color=(255,0,0)):
+    """Add a list of points for plotting"""
+    global all_points
+    all_points.append((data,color))
+
+def add_function(f, color=(0,0,255)):
+    """Add a function for plotting"""
+    global all_functions
+    all_functions.append((f,color))
+    
+
+def plot(xrange=(0,400),yrange=(0,400),screen_range=(400,400)):
+    """Plot all the stored data"""
+    global clock, all_points, all_functions
 
     draw_axis(xrange,yrange,screen_range)
 
-    for p in data:
-        c = convert_point(p,xrange,yrange,screen_range)
-        draw_point(c)
+    for (points,color) in all_points:
+        for p in points:
+            cp = convert_point(p,xrange,yrange,screen_range)
+            draw_point(cp, color)
+
+    for (f,color) in all_functions:
+        # get the points for the function
+        points = generate_points(f,xrange,yrange,screen_range)
+        for p in points:
+            cp = convert_point(p,xrange,yrange,screen_range)
+            draw_point(cp,color)
+
 
     while(True):
         pygame.display.flip()
@@ -30,16 +53,15 @@ def plot(data,xrange=(0,400),yrange=(0,400),screen_range=(400,400)):
 
         clock.tick(20)
 
-def plot_f(f,xrange=(0,400),yrange=(0,400),screen_range=(400,400)):
+def generate_points(f,xrange=(0,400),yrange=(0,400),screen_range=(400,400)):
     """Generate all required points to draw a function and call plot"""
     npoints = screen_range[0]
     xrange_length = xrange[1]-xrange[0]
     increment = xrange_length/float(npoints)
 
     data = [(x,f(x)) for x in drange(xrange[0],xrange[1],increment)]
-    for d in data:
-        print "%f,%f" % (d[0],d[1])
-    plot(data,xrange,yrange,screen_range)
+    
+    return data
 
 
 def draw_axis(xrange, yrange, screen_range):
@@ -76,9 +98,9 @@ def convert_point(point, xrange, yrange, screen_range):
     return (x,y)
 
 
-def draw_point(point):
+def draw_point(point,color):
     """draw a point in the screen"""
-    pygame.draw.circle(screen,(255,0,0),point,2)
+    pygame.draw.circle(screen,color,point,2)
 
 
 # Found in stackoverflow.com
@@ -97,7 +119,12 @@ if __name__ == "__main__":
 
     init(screen_size)
 
-    plot_f(lambda x: math.sin(2*x*math.pi),
-           xrange=(-math.pi,math.pi),
-           yrange=(-1,1),
-           screen_range=screen_size)
+    add_function(lambda x: math.sin(2*x*math.pi), (255,0,0))
+    add_function(lambda x: 0.5, (0,255,0))
+    
+    add_points([(1,1),(2,0.5), (3,0)],(0,0,255))
+
+    plot(xrange=(-math.pi,math.pi),
+         yrange=(-1,1),
+         screen_range=screen_size)
+    
